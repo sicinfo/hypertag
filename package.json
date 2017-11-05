@@ -1,0 +1,20 @@
+{
+  "name": "hypertag",
+  "version": "0.0.1",
+  "description": "Hypertag",
+  "main": "src/hypertag.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://git.assembla.com/sicinfo.hypertag.git"
+  },
+  "keywords": [
+    "tag",
+    "html"
+  ],
+  "author": "Moreira",
+  "license": "ISC",
+  "dependencies": {}
+}

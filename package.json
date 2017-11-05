@@ -1,6 +1,6 @@
 {
   "name": "hypertag",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Hypertag",
   "main": "src/hypertag.js",
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://git.assembla.com/sicinfo.hypertag.git"
+    "url": "https://github.com/sicinfo/hypertag.git"
   },
   "keywords": [
     "tag",

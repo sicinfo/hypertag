@@ -1,30 +1,20 @@
 /**
- * hypertag - v0.0.3
+ * hypertag - v0.0.4
  * 
  * dependency: systemjs
  */
  
- (function(global, isNode) {
-
-  const isBool = a => 'boolean' == typeof(a);
+ (function(global, isNode, isProps) {
 
   class Tag {
     
-    constructor(n, ...c) {
-      this.name = n;
-      this.props = 'object' == typeof(c[0]) &&
-        !(Array.isArray(c[0]) || (c[0].name && c[0].props && c[0].childs)) &&
-        c.shift() || {};
-      this.props['class'] = (function(a) {
-        const b = new Set();
-        a.split(' ').filter(b=>b).forEach(e=>b.add(e));
-        return b;
-      }(this.props['class'] || ''));
-      this.childs = c;
+    constructor(name, ...childs) {
+      [this.name, this.props, this.childs] = [name, isProps(childs[0]) ? childs.shift() : {}, childs]
+      this.props['class'] = (a => new Set(a.split(' ').filter(e=>e)))(this.props['class'] || '')
     }
-
+    
     setProps(k, v) {
-      this.props[k] = v;
+      'class' == k ? this.addClass([v]) : (this.props[k] = v)
     }
 
     delProps(k) {
@@ -40,29 +30,60 @@
     }
 
     toString() {
-      let n = this.name;
-      let p = '';
-      let c = this.childs;
+      let [name, childs, props] = [this.name, this.childs, '']
 
-      for (let k in this.props) {
-        let v;
-        if ('class' == k) {
-          if (!(this.props[k].size)) continue;
-          v = [...this.props[k]].join(' ');
+      for (let key in this.props) {
+
+        let [prop, val] = [this.props[key]] 
+        if ('class' == key) {
+          if (!(prop.size)) continue
+          val = [...prop].join(' ')
         }
-        else v = this.props[k];
+        else val = prop
 
-        let isBoolean = isBool(v);
-        if (!isBoolean || v) {
-          p = p + ' ' + k;
-          if (isBoolean) continue;
+        let isBoolean = 'boolean' == typeof(val)
+        if (!isBoolean || val) {
+          props = `${props} ${key}`
+          if (isBoolean) continue
         }
 
-        p = p + '="' + v + '"';
+        props = `${props}="${val}"`
       }
 
-      if ('/' == n.slice(-1)) return '<' + n.slice(0, -1) + p + '>';
-      return '<' + n + p + '>' + c.join('') + '</' + n + '>';
+      return (([b, c]) => `<${b}${props}${c}>`)((a => '/' == a.slice(-1) ? [a.slice(0, -1), ''] : [a, `>${childs.join('')}</${a}`])(name))
+
+
+
+
+        
+        
+        
+        
+    //     (a, c) => b => b)('/' == a.slice(-1)
+    
+    
+    
+    // )
+      
+      
+      
+    //   a ? b.slice(0, -1) : b))(name, props)
+
+
+
+        
+        
+        
+        
+    //     `<${e}${c}${a ? '' : `>${d}</${e}`}>`)(a ? b.slice(0, -1) : b))('/' == name.slice(-1))
+      
+      
+      
+      
+      
+      
+      
+    //   , a && d || '') => `<${a?'/' == name.slice(-1) ? `<${name.slice(0, -1)}${props}>` : `<${name}${props}>${childs.join('')}</${name}>`
     }
 
   }
@@ -77,7 +98,9 @@
 }(
   this,
   // isNode
-  'undefined' !== typeof(process) && process.versions && process.versions.node
+  'undefined' !== typeof(process) && process.versions && process.versions.node,
+  //isProps
+  a => 'object' == typeof(a) && !(Array.isArray(a) || (a.name && a.props && a.childs))
 ));
 
   

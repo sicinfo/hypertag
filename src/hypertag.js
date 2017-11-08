@@ -4,8 +4,13 @@
  * dependency: systemjs
  */
  
- (function(global, isNode, isProps) {
+ (global => {
 
+  const isNode = 'undefined' !== typeof(process) && process.versions && process.versions.node
+  const isTag = a => a.name && a.props && a.childs
+  const isProps = a => 'object' == typeof(a) && !(Array.isArray(a) || (isTag(a)))
+  const existProps = (a, ...b) => Array.isArray(a) && a.length && isProps(a[0]) && b.length == b.filter(e => e in a[0]).length
+  
   class Tag {
     
     constructor(name, ...childs) {
@@ -51,56 +56,42 @@
       }
 
       return (([b, c]) => `<${b}${props}${c}>`)((a => '/' == a.slice(-1) ? [a.slice(0, -1), ''] : [a, `>${childs.join('')}</${a}`])(name))
-
-
-
-
-        
-        
-        
-        
-    //     (a, c) => b => b)('/' == a.slice(-1)
-    
-    
-    
-    // )
-      
-      
-      
-    //   a ? b.slice(0, -1) : b))(name, props)
-
-
-
-        
-        
-        
-        
-    //     `<${e}${c}${a ? '' : `>${d}</${e}`}>`)(a ? b.slice(0, -1) : b))('/' == name.slice(-1))
-      
-      
-      
-      
-      
-      
-      
-    //   , a && d || '') => `<${a?'/' == name.slice(-1) ? `<${name.slice(0, -1)}${props}>` : `<${name}${props}>${childs.join('')}</${name}>`
     }
 
   }
 
-  const h = (...a) => new Tag(...a); 
+  class Input extends Tag {
+    
+    constructor(props) {
+      super('input/', props)
+    }
+
+  }
+
+  class Label extends Tag {
+    
+    constructor(label = 'label', ...args) {
+
+      if (existProps(args)) {
+        args.unshift(label);
+        [args[0], args[1]] = [args[1], args[0]];
+      }
+      else args.unshift(label);
+
+      super('label', ...args)
+    }
+
+  }
+
+  const h = (...a) => new Tag(...a)
+  h.input = a => new Input(a)
+  h.label = (b, ...a) => new Label(b, ...a)
 
   console.log(isNode);
 
   if (isNode) module.exports = h;
   else define([], () => h)
 
-}(
-  this,
-  // isNode
-  'undefined' !== typeof(process) && process.versions && process.versions.node,
-  //isProps
-  a => 'object' == typeof(a) && !(Array.isArray(a) || (a.name && a.props && a.childs))
-));
+})(this);
 
   

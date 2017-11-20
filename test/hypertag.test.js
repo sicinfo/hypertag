@@ -3,9 +3,12 @@
  * 
  * changelog [0.1.0]
  * - adiciona tag.input
+ * 
+ * changelog [0.2.0]
+ * - altera caminho do arquivo hypertag
  */
 
-const h = require('../src/hypertag');
+const h = require('../src/lib/hypertag');
 const test = require('tape');
 
 let a1 = h('a');

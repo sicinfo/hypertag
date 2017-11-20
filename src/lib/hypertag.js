@@ -4,7 +4,7 @@
  * dependency: systemjs
  */
  
- (global => {
+(global => {
 
   const isNode = 'undefined' !== typeof(process) && process.versions && process.versions.node
   const isTag = a => a.name && a.props && a.childs

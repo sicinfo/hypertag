@@ -1,8 +1,8 @@
 {
   "name": "hypertag",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Hypertag",
-  "main": "src/hypertag.js",
+  "main": "hypertag.js",
   "scripts": {
     "test": "node test/hypertag.test"
   },

@@ -28,6 +28,11 @@
       this.props = isProps(childs[0]) ? childs.shift() : {};
       this.childs = childs;
       this.props['class'] = (a => new Set(a.split(' ').filter(e=>e)))(this.props['class'] || '');
+      
+      this.props['style'] = (a => new Set(a.map(e => {
+        let [k, v] = e.split(':');
+        return `${k.replace(/ /g, '')}:${v}`;
+      })))('style' in this.props ? this.props['style'].split(';').filter(e=>e) : []);
     }
 
     setProps(k, v) {
@@ -51,16 +56,33 @@
       return this;
     }
 
+    addStyle(k, v) {
+      this.props['style'].add(`${k.replace(/ /g, '')}:${v}`);
+      return this;
+    }
+
+    delStyle(k) {
+      [...this.props['style']].some(a => a.startsWith(`${k}:`) && this.props['style'].delete(a));
+      return this;
+    }
+
     toString() {
       let [name, childs, props] = [this.name, this.childs, '']
 
       for (let key in this.props) {
 
         let [prop, val] = [this.props[key]] 
+
         if ('class' == key) {
           if (!(prop.size)) continue
           val = [...prop].join(' ')
         }
+
+        else if ('style' == key) {
+          if (!(prop.size)) continue
+          val = [...prop].join(';')
+        }
+
         else val = prop
 
         let isBoolean = 'boolean' == typeof(val)

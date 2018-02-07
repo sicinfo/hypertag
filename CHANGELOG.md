@@ -1,13 +1,10 @@
 ## Hypertag
 
-## [Unreleased]
-
-## [0.4.0]
+## [Unreleased] [0.4.0]
 ### atualiz
 
 mudulariza - bulma, agora h-bulma.js
 remove tag personalizadas de hypertag
-
 
 ## [0.3.0]
 ### inclui
@@ -20,8 +17,6 @@ remove tag personalizadas de hypertag
 ### remove
 - h.label 
 
-
-
 ## [0.2.0]
 altera a arquitetura
 - restruturação de diretorio, inclui diretorio lib
@@ -30,5 +25,3 @@ altera a arquitetura
 ### adicionado
 - tag.input
 - tag.label
-
-

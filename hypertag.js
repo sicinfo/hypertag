@@ -1,37 +1,54 @@
 /**
  * hypertag - v0.0.4
  * 
- * dependency: systemjs
- */
+*/
  
-(global => {
+((global, h) => {
 
   const isNode = 'undefined' !== typeof(process) && process.versions && process.versions.node
+  const isSystemjs = 'undefined' !== typeof(define);
+
+  if (isNode) module.exports = h;
+  else if (isSystemjs) define([], () => h);
+  else {
+    global.hypertag = h;
+    if (!('h' in global)) global = h;
+  }
+
+})(this, ((global) => {
+
   const isTag = a => a.name && a.props && a.childs
   const isProps = a => 'object' == typeof(a) && !(Array.isArray(a) || (isTag(a)))
-  const existProps = (a, ...b) => Array.isArray(a) && a.length && isProps(a[0]) && b.length == b.filter(e => e in a[0]).length
-  
+  const existProps = (a, ...b) => Array.isArray(a) && a.length && isProps(a[0]) && b.length == b.some(e => e in a[0]);
+
   class Tag {
     
     constructor(name, ...childs) {
-      [this.name, this.props, this.childs] = [name, isProps(childs[0]) ? childs.shift() : {}, childs]
-      this.props['class'] = (a => new Set(a.split(' ').filter(e=>e)))(this.props['class'] || '')
+      this.name = name;
+      this.props = isProps(childs[0]) ? childs.shift() : {};
+      this.childs = childs;
+      this.props['class'] = (a => new Set(a.split(' ').filter(e=>e)))(this.props['class'] || '');
     }
-    
+
     setProps(k, v) {
-      'class' == k ? this.addClass([v]) : (this.props[k] = v)
+      if ('class' == k) this.addClass([v]);
+      else this.props[k] = v;
+      return this;
     }
 
     delProps(k) {
       if (k in this.props) delete this.props[k];
+      return this;
     }
 
     addClass(...a) {
       a.forEach(b=>b.split(' ').filter(e=>e).forEach(e=>this.props['class'].add(e)));
+      return this;
     }
 
     delClass(...a) {
       a.forEach(b=>b.split(' ').filter(e=>e).forEach(e=>this.props['class'].delete(e)));
+      return this;
     }
 
     toString() {
@@ -55,43 +72,18 @@
         props = `${props}="${val}"`
       }
 
-      return (([b, c]) => `<${b}${props}${c}>`)((a => '/' == a.slice(-1) ? [a.slice(0, -1), ''] : [a, `>${childs.join('')}</${a}`])(name))
+      return (([b, c]) => `<${b}${props}${c}>`)((a => a.endsWith('/') ? [a.slice(0, -1), ''] : [a, `>${childs.join('')}</${a}`])(name))
     }
 
   }
 
-  class Input extends Tag {
-    
-    constructor(props) {
-      super('input/', props)
-    }
+  const h = (...args) => new Tag(...args)
+  h.isTag = isTag;
+  h.isProps = isProps;
+  h.existProps = existProps;
 
-  }
+  return h;
 
-  class Label extends Tag {
-    
-    constructor(label = 'label', ...args) {
-
-      if (existProps(args)) {
-        args.unshift(label);
-        [args[0], args[1]] = [args[1], args[0]];
-      }
-      else args.unshift(label);
-
-      super('label', ...args)
-    }
-
-  }
-
-  const h = (...a) => new Tag(...a)
-  h.input = a => new Input(a)
-  h.label = (b, ...a) => new Label(b, ...a)
-
-  console.log(isNode);
-
-  if (isNode) module.exports = h;
-  else define([], () => h)
-
-})(this);
+})(this));
 
   

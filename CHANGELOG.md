@@ -1,6 +1,13 @@
 ## Hypertag
 
-## [Unreleased] [0.4.0]
+## [Unreleased]
+
+## [0.5.0]
+### inclui
+
+- métodos addStyle e delStyle para inclusão e remoção de styles
+
+##[0.4.0]
 ### atualiz
 
 mudulariza - bulma, agora h-bulma.js

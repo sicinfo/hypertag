@@ -18,10 +18,19 @@ let a2 = h('a', {'class': 'a c d'});
 a2.delClass('d c');
 a2.addClass('a c','b');
 
+let a3 = h('a', {'style': 'a:1;c:3;d:4'});
+a3.delStyle('d');
+a3.addStyle('a','1');
+a3.addStyle('b','2');
+
+console.log(26, a2.toString());
+
 [
   ['tag  vazia', '<a>', 'a/'],
   ['tag  vazia', '<a></a>', 'a'],
+  
   ['tag com class', '<a class="a"></a>', 'a', {'class':'a'}],
+
   ['tag ', '<a>a</a>', 'a', 'a'],
   ['tag com tag', '<a><a></a></a>', 'a', h('a')],
   ['tag com tag', '<a><a>a</a></a>', 'a', h('a', 'a')],
@@ -29,7 +38,12 @@ a2.addClass('a c','b');
   ['tag com prop', '<a a="a"></a>', 'a', {'a':'a'}],
   ['tag com prop', '<a a="a">a</a>', 'a', {'a':'a'}, 'a'],
   ['tag com prop', '<a><a a="a"></a></a>', 'a', a1],
-  ['tag com prop', '<a><a class="a c b"></a></a>', 'a', a2],
+
+  ['tag com prop class', '<a><a class="a c b"></a></a>', 'a', a2],
+  
+  ['tag com prop style', '<a><a style="a:1;c:3;b:2"></a></a>', 'a', a3],
+
+
   ['tag com prop', '<a><a a="a">a</a>a</a>', 'a', h('a', {'a':'a'}, 'a'), 'a'],
   ['tag com prop', '<a a="a">', 'a/', {'a':'a'}],
   ['tag com prop', '<a a="a" b="b">', 'a/', {'a':'a', 'b':'b'}]
@@ -38,9 +52,9 @@ a2.addClass('a c','b');
   t.end();
 }));
 
-const t1 = (l, r, f) => test(l, t => {
+// const t1 = (l, r, f) => test(l, t => {
 
-  (a => t.assert(r === a, `${r} - ${a}`))(f());
-  t.end();
+//   (a => t.assert(r === a, `${r} - ${a}`))(f());
+//   t.end();
 
-});
+// });

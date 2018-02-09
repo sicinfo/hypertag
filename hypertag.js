@@ -2,11 +2,11 @@
  * hypertag - v0.0.4
  * 
 */
- 
+
 ((global, h) => {
 
-  const isNode = 'undefined' !== typeof(process) && process.versions && process.versions.node
-  const isSystemjs = 'undefined' !== typeof(define);
+  const isNode = 'undefined' !== typeof (process) && process.versions && process.versions.node
+  const isSystemjs = 'undefined' !== typeof (define);
 
   if (isNode) module.exports = h;
   else if (isSystemjs) define([], () => h);
@@ -18,26 +18,33 @@
 })(this, ((global) => {
 
   const isTag = a => a.name && a.props && a.childs
-  const isProps = a => 'object' == typeof(a) && !(Array.isArray(a) || (isTag(a)))
+  const isProps = a => 'object' == typeof (a) && !(Array.isArray(a) || (isTag(a)))
   const existProps = (a, ...b) => Array.isArray(a) && a.length && isProps(a[0]) && b.length == b.some(e => e in a[0]);
 
   class Tag {
-    
+
     constructor(name, ...childs) {
       this.name = name;
       this.props = isProps(childs[0]) ? childs.shift() : {};
       this.childs = childs;
-      this.props['class'] = (a => new Set(a.split(' ').filter(e=>e)))(this.props['class'] || '');
-      
-      this.props['style'] = (a => new Set(a.map(e => {
-        let [k, v] = e.split(':');
-        return `${k.replace(/ /g, '')}:${v}`;
-      })))('style' in this.props ? this.props['style'].split(';').filter(e=>e) : []);
+      this.props['class'] = (a => new Set(a.split(' ').filter(e => e)))(this.props['class'] || '');
+
+      this.props['style'] = (a => {
+        const o = {};
+        a.forEach(e => {
+          let [k, v] = e.split(':');
+          o[`${k.replace(/ /g, '')}`] = v.trim();
+        })
+        return o;
+      })('style' in this.props ? this.props['style'].split(';').filter(e => e) : []);
     }
 
-    setProps(k, v) {
-      if ('class' == k) this.addClass([v]);
-      else this.props[k] = v;
+    setProps(a) {
+      Object.keys(a).forEach(k=>{
+        if ('class' == k) this.addClass([a[k]]);
+        else if ('style' == k) this.addStyle(a[k]);
+        else this.props[k] = a[k];  
+      })
       return this;
     }
 
@@ -47,22 +54,22 @@
     }
 
     addClass(...a) {
-      a.forEach(b=>b.split(' ').filter(e=>e).forEach(e=>this.props['class'].add(e)));
+      a.forEach(b => b.split(' ').filter(e => e).forEach(e => this.props['class'].add(e)));
       return this;
     }
 
     delClass(...a) {
-      a.forEach(b=>b.split(' ').filter(e=>e).forEach(e=>this.props['class'].delete(e)));
+      a.forEach(b => b.split(' ').filter(e => e).forEach(e => this.props['class'].delete(e)));
       return this;
     }
 
-    addStyle(k, v) {
-      this.props['style'].add(`${k.replace(/ /g, '')}:${v}`);
+    addStyle(a) {
+      Object.keys(a).forEach(k => this.props['style'][k] = a[k]);
       return this;
     }
 
     delStyle(k) {
-      [...this.props['style']].some(a => a.startsWith(`${k}:`) && this.props['style'].delete(a));
+      delete this.props['style'][k]
       return this;
     }
 
@@ -71,7 +78,7 @@
 
       for (let key in this.props) {
 
-        let [prop, val] = [this.props[key]] 
+        let [prop, val] = [this.props[key]]
 
         if ('class' == key) {
           if (!(prop.size)) continue
@@ -79,13 +86,13 @@
         }
 
         else if ('style' == key) {
-          if (!(prop.size)) continue
-          val = [...prop].join(';')
+          val = Object.keys(prop).map(k => `${k}:${prop[k].trim()}`).join(';')
+          if (!(val)) continue
         }
 
         else val = prop
 
-        let isBoolean = 'boolean' == typeof(val)
+        let isBoolean = 'boolean' == typeof (val)
         if (!isBoolean || val) {
           props = `${props} ${key}`
           if (isBoolean) continue
@@ -100,12 +107,11 @@
   }
 
   const h = (...args) => new Tag(...args)
-  h.isTag = isTag;
-  h.isProps = isProps;
-  h.existProps = existProps;
 
-  return h;
+  return {
+    Tag, isTag, isProps, existProps, h,
+    'input': (a) => new Tag('input/', a)
+  };
 
 })(this));
 
-  

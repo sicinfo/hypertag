@@ -2,6 +2,18 @@
 
 ## [Unreleased]
 
+## [0.6.0] 
+#### [2018-02-08]
+### inlui
+- modulo para vue => h-vue
+
+### altera
+
+- altera parametros de entrada para 
+  - setProps('name', 'nome') => setProps({'name':'nome'})
+  - addStyle('display', 'grid') => addStyle({'display':'grid'})
+  os modulos retorna um objeto no lugar de uma funcão
+
 ## [0.5.0]
 ### inclui
 

@@ -5,40 +5,46 @@
  * 
  * [0.3.0] inclui tags personalizada para bulma.css
  */
- 
+
 ((global, h) => {
 
-  const isNode = 'undefined' !== typeof(process) && process.versions && process.versions.node
-  const isSystemjs = 'undefined' !== typeof(define);
+  const isNode = 'undefined' !== typeof (process) && process.versions && process.versions.node
+  const isSystemjs = 'undefined' !== typeof (define);
 
 
 
   if (isNode) module.exports = h(require('./hypertag'));
 
   else if (isSystemjs) define(['hypertag'], hypertag => h(hypertag));
-  
-})(this, hypertag => {
 
-  const existProps = hypertag.existProps;
+})(this, Hypertag => {
 
-  const h = (tagName, ...a) => {
+  const existProps = Hypertag.existProps;
 
-    if (existProps(a, 'tagName')) {
-      tagName = a[0].tagName;
-      delete a[0].tagName
+  class Tag extends Hypertag.Tag {
+
+    constructor(tagName, ...childs) {
+
+      if (existProps(childs, 'tagName')) {
+        tagName = childs[0].tagName;
+        delete childs[0].tagName
+      }
+
+      super(tagName, ...childs);
     }
+  }
 
-    return hypertag(tagName, ...a);
-  };
+  const h = (...a) => new Tag(...a);
 
-  h.input   = a       => h('input/', a).addClass('input');
-  h.control = (...a)  => h('p', ...a).addClass('control');
-  h.button = (...a)   => h('button', ...a).addClass('button');
-  h.field = (...a)    => h('div', ...a).addClass('field');
-  h.column = (...a)   => h('div', ...a).addClass('column');
-  h.columns = (...a)  => h('div', ...a).addClass('columns');
+  return {
+    Tag, h,
+    'input': a => h('input/', a).addClass('input'),
+    'control': (...a) => h('p', ...a).addClass('control'),
+    'button': (...a) => h('button', ...a).addClass('button'),
+    'field': (...a) => h('div', ...a).addClass('field'),
+    'column': (...a) => h('div', ...a).addClass('column'),
+    'columns': (...a) => h('div', ...a).addClass('columns')
+  }
 
-  return h;
 });
 
-  

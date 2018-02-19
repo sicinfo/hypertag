@@ -3,50 +3,36 @@
  * 
  * dependency: systemjs
  * 
- * [0.3.0] inclui tags personalizada para vuejs
+ * [0.6.0] inclui tags personalizada para vuejs
  */
 
-((root, h) => {
+define([], () => {
 
-  const isNode = 'undefined' !== typeof (process) && process.versions && process.versions.node
-  const isSystemjs = 'undefined' !== typeof (define);
+  const version = '0.6.2'
 
-  if (isNode) module.exports = h(require('./hypertag'));
+  const H = function (cb) {
 
-  else if (isSystemjs) define(['hypertag'], hypertag => h(hypertag));
+    return function (h, cx) {
 
-})(this, Hypertag => {
+      return cb((a, ...c) => {
 
-  class Tag extends Hypertag.Tag {
+        let b = (
+          c.length &&
+          'object' == typeof (c[0]) &&
+          void 0 == c[0].tag &&
+          void 0 == c[0].data &&
+          void 0 == c[0].children
+        ) ? c.shift() : {};
 
-    constructor(tagName, ...childs) {
-      if (Hypertag.existProps(childs, 'tagName')) {
-        tagName = childs[0].tagName;
-        delete childs[0].tagName;
-      }
-      super(tagName, ...childs)
-    }
+        c.length == 1 && Array.isArray(c[0]) && (c = c[0])
 
-  }
+        return h(a, b, c);
 
-  class Input extends Hypertag.Tag {
-    
-    constructor(model, props) {
-      super('input/', props);
-      this.setProps({'v-model': model, 'lazy': true});
-    }
+      }, cx || this);
 
-    change(arg) {
-      this.setProps({'@change': arg})
-      return this;
-    }
+    };
+  };
 
-  }
+  return { version, H }
 
-  return {
-    Tag, Input,
-    'h': (...a) => new Tag(...a),
-    'input': (model, props) => new Input(model, props)
-  }
 });
-

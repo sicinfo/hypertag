@@ -14,8 +14,6 @@ define([], () => {
 
     return function (h, cx) {
 
-      console.log(cx);
-
       return cb((a, ...c) => {
 
         let b = (
@@ -26,7 +24,9 @@ define([], () => {
           void 0 == c[0].children
         ) ? c.shift() : {};
 
-        return h(a, b, c.length == 1 && Array.isArray(c[0]) ? c[0] : c);
+        c.length == 1 && Array.isArray(c[0]) && (c = c[0])
+
+        return h(a, b, c);
 
       }, cx || this);
 
@@ -34,5 +34,5 @@ define([], () => {
   };
 
   return { version, H }
-  
+
 });

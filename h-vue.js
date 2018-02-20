@@ -14,61 +14,32 @@ define([], () => {
 
     return function (h, cx) {
 
-      const fe = {};
+      cx || (cx = this);
 
-      fe['text'] = (a, ...c) => {
-
-        let cx_name = c[0];
-        let b = c.length > 1 ? c[1] : {};
-
-        b['attrs'] || (
-          b['attrs'] = {}
-        );
-
-        b['attrs']['type'] || (
-          b['attrs']['type'] = 'text'
-        );
-
-        b['domProps'] || (
-          b['domProps'] = { 'value': cx_name }
-        );
-
-        b['on'] || (
-          b['on'] = {}
-        );
-
-        b['on']['change'] || (
-          b['on']['change'] = evt => { evt.stopPropagation(); cx_name = evt.target.value }
-        );
-
-        return h('input', b)
-      };
-
-      const fg = (a, ...c) => {
+      return cb((a, ...c) => {
 
         let b = (
-          c.length &&
+          void 0 != c[0] &&
           'object' == typeof (c[0]) &&
           void 0 == c[0].tag &&
           void 0 == c[0].data &&
           void 0 == c[0].children
         ) ? c.shift() : {};
 
-        if ('on' in b) {
-          'click.prevent' in b.on && (
-            b.on['click'] = function(evt) { 
-              evt.stopPropagation(); 
-              b.on['click.prevent'].call(this, evt) 
-            }           
-          )
-        }
+        'on' in b && Object.keys(b.on).some(k => {
+          let e = k.split('.');
+          if (e.indexOf('prevent', 1) > 0) {
+            b.on[e[0]] = function(evt) {
+              evt.stopPropagation();
+              b.on[k].call(this, evt)
+            }
+          }
+        });
 
         c.length == 1 && Array.isArray(c[0]) && (c = c[0])
 
         return h(a, b, c);
-      };
-
-      return cb((a, ...c) => (fe[a] || fg)(a, ...c), cx || this);
+      }, cx );
 
     };
   };

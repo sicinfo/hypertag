@@ -6,44 +6,50 @@
  * [0.6.0] inclui tags personalizada para vuejs
  */
 
-define([], () => {
+((root, H) => {
 
-  const version = '0.7.0';
+  const version = '0.8.0';
 
-  const H = function (cb) {
+  if ('undefined' !== typeof (define)) {
+    define([], () => { version, H });
+  }
 
-    return function (h, cx) {
+  else if ('undefined' != typeof (process) && process.versions && process.versions.node) {
+    module.exports = { version, H };
+  }
 
-      cx || (cx = this);
+  else {
+    root.hypertag = { version, H };
+    if (!('H' in root)) root = H;
+  }
 
-      return cb((a, ...c) => {
+})(this || self || windows, cb => function (h, cx) {
 
-        let b = (
-          void 0 != c[0] &&
-          'object' == typeof (c[0]) &&
-          void 0 == c[0].tag &&
-          void 0 == c[0].data &&
-          void 0 == c[0].children
-        ) ? c.shift() : {};
+  cx || (cx = this);
 
-        'on' in b && Object.keys(b.on).some(k => {
-          let e = k.split('.');
-          if (e.indexOf('prevent', 1) > 0) {
-            b.on[e[0]] = function(evt) {
-              evt.stopPropagation();
-              b.on[k].call(this, evt)
-            }
-          }
-        });
+  return cb((a, ...c) => {
 
-        c.length == 1 && Array.isArray(c[0]) && (c = c[0])
+    let b = (
+      void 0 != c[0] &&
+      'object' == typeof (c[0]) &&
+      void 0 == c[0].tag &&
+      void 0 == c[0].data &&
+      void 0 == c[0].children
+    ) ? c.shift() : {};
 
-        return h(a, b, c);
-      }, cx );
+    'on' in b && Object.keys(b.on).some(k => {
+      let e = k.split('.');
+      if (e.indexOf('prevent', 1) > 0) {
+        b.on[e[0]] = function (evt) {
+          evt.stopPropagation();
+          b.on[k].call(this, evt)
+        }
+      }
+    });
 
-    };
-  };
+    c.length == 1 && Array.isArray(c[0]) && (c = c[0])
 
-  return { version, H }
+    return h(a, b, c);
+  }, cx);
 
 });

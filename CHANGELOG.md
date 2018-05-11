@@ -1,6 +1,7 @@
 ## Hypertag
 
-## [Unreleased]
+## [0.8.0] [2018-05-11] [Unreleased]
+### adiciona melhorias
 
 ## [0.7.0] [2018-02-19]
 ###

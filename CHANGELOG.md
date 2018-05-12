@@ -4,6 +4,7 @@
 ### adiciona melhorias
 - corrige o contexto this dentro da função render
 - altera os nomes das variáveis
+- move arquivos ".js" para diretorio lib
 
 ## [0.7.0] [2018-02-19]
 ###

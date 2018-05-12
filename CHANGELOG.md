@@ -1,6 +1,9 @@
 ## Hypertag
 
-## [Unreleased]
+## [0.8.0] [2018-05-12]
+### adiciona melhorias
+- corrige o contexto this dentro da função render
+- altera os nomes das variáveis
 
 ## [0.7.0] [2018-02-19]
 ###

@@ -1,5 +1,6 @@
 /**
- * hypertag - v0.6.0
+ *  * hypertag - v0.6.0
+ * 
  * 
  * dependency: systemjs
  * 
@@ -7,11 +8,11 @@
  */
 
 ((root, H) => {
-
+  
   const version = '0.8.0';
 
   if ('undefined' !== typeof (define)) {
-    define([], () => { version, H });
+    define([], () => ({ version, H }));
   }
 
   else if ('undefined' != typeof (process) && process.versions && process.versions.node) {
@@ -23,33 +24,32 @@
     if (!('H' in root)) root = H;
   }
 
-})(this || self || windows, cb => function (h, cx) {
+})(this || self || windows, callBack => function(createElement, context) {
+  
+  return callBack.call(this, (tagName, ...children) => {
 
-  cx || (cx = this);
+    const attributtes = undefined == children[0] &&
+      'object' == typeof (children[0]) &&
+      undefined == children[0].tag &&
+      undefined == children[0].data &&
+      undefined == children[0].children && 
+      children.shift() || {};
 
-  return cb((a, ...c) => {
-
-    let b = (
-      void 0 != c[0] &&
-      'object' == typeof (c[0]) &&
-      void 0 == c[0].tag &&
-      void 0 == c[0].data &&
-      void 0 == c[0].children
-    ) ? c.shift() : {};
-
-    'on' in b && Object.keys(b.on).some(k => {
-      let e = k.split('.');
-      if (e.indexOf('prevent', 1) > 0) {
-        b.on[e[0]] = function (evt) {
+    'on' in attributtes && Object.keys(attributtes.on).some(onKeys => {
+      const keyValues = onKeys.split('.');
+      if (keyValues.indexOf('prevent', 1) > 0) {
+        attributtes.on[keyValues[0]] = function (evt) {
           evt.stopPropagation();
-          b.on[k].call(this, evt)
-        }
+          attributtes.on[onKeys].call(this, evt);
+        };
       }
     });
+    
+    children.length == 1 &&
+  Array.isArray(children[0]) && 
+    (children = children[0]);
 
-    c.length == 1 && Array.isArray(c[0]) && (c = c[0])
-
-    return h(a, b, c);
-  }, cx);
+    return createElement(tagName, attributtes, children);
+  }, context);
 
 });

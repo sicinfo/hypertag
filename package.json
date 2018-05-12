@@ -16,9 +16,8 @@
   ],
   "author": "Moreira",
   "license": "ISC",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
-    "tape": "^4.8"
+    "tape": "^4.9.0"
   }
 }

@@ -15,7 +15,7 @@
     define([], () => ({ version, H }));
   }
 
-  else if ('undefined' != typeof (process) && process.versions && process.versions.node) {
+  else if ('undefined' !== typeof (process) && process.versions && process.versions.node) {
     module.exports = { version, H };
   }
 
@@ -24,30 +24,21 @@
     if (!('H' in root)) root = H;
   }
 
-})(this || self || windows, callBack => function(createElement, context) {
+})(this || self || window, callBack => function(createElement, context) {
   
   return callBack.call(this, (tagName, ...children) => {
 
-    const attributtes = undefined == children[0] &&
+    // se primeiro elemento children for um objecto
+    // de attributes
+    const attributtes = children.length &&
       'object' == typeof (children[0]) &&
-      undefined == children[0].tag &&
-      undefined == children[0].data &&
-      undefined == children[0].children && 
+      ['tag', 'data', 'children'].every(key => key === undefined) &&
       children.shift() || {};
 
-    'on' in attributtes && Object.keys(attributtes.on).some(onKeys => {
-      const keyValues = onKeys.split('.');
-      if (keyValues.indexOf('prevent', 1) > 0) {
-        attributtes.on[keyValues[0]] = function (evt) {
-          evt.stopPropagation();
-          attributtes.on[onKeys].call(this, evt);
-        };
-      }
-    });
-    
-    children.length == 1 &&
-  Array.isArray(children[0]) && 
-    (children = children[0]);
+    // compatibiliza com createElement Vue
+    if (children.length == 1 && Array.isArray(children[0])) {
+      children = children[0];
+    }
 
     return createElement(tagName, attributtes, children);
   }, context);

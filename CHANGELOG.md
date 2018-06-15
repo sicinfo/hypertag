@@ -1,5 +1,10 @@
 ## Hypertag
 
+## [0.9.0] [2018-06-09]
+### h-vue - adiciona melhorias
+- função estática container
+- inclui component InputTextdate 
+
 ## [0.8.0] [2018-05-12]
 ### adiciona melhorias
 - corrige o contexto this dentro da função render

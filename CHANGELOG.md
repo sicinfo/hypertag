@@ -1,5 +1,9 @@
 ## Hypertag
 
+## [0.10.0] [2018-07-03]
+### h-vue - adiciona melhorias
+- inclui component InputText, InputPassword
+
 ## [0.9.0] [2018-06-09]
 ### h-vue - adiciona melhorias
 - função estática container
